@@ -55,7 +55,7 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             return builder;
         }
 
-        public static ILoggingBuilder AddLogDNA(
+        public static ILoggingBuilder AddLogDNAWeb(
             this ILoggingBuilder builder,
             string ingestionKey,
             LogLevel logLevel,
