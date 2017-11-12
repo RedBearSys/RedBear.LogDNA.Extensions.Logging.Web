@@ -21,6 +21,7 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
                 IpAddress = _contextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString(),
                 UserAgent = _contextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString(),
                 Language = _contextAccessor.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(',').FirstOrDefault(),
+                Method = _contextAccessor.HttpContext?.Request.Method,
                 Url = _contextAccessor.HttpContext?.Request.GetDisplayUrl()
             };
         }

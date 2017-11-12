@@ -16,6 +16,9 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
         [JsonProperty("Language", NullValueHandling = NullValueHandling.Ignore)]
         public string Language { get; set; }
 
+        [JsonProperty("Method", NullValueHandling = NullValueHandling.Ignore)]
+        public string Method { get; set; }
+
         [JsonProperty("Url", NullValueHandling = NullValueHandling.Ignore)]
         public string Url { get; set; }
     }
