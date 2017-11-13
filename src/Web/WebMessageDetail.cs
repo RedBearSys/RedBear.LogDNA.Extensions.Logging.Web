@@ -21,5 +21,8 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Url { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string Identity { get; set; }
     }
 }
