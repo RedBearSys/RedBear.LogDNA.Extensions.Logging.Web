@@ -26,14 +26,42 @@ public void ConfigureServices(IServiceCollection services)
 
 The following optional parameters exist on `AddLogDNAWeb()`:
 
-* `hostName` - used to override the machine's hostname. Defaults to `Environment.MachineName`;
-* `tags` - to be associated with the host;
-* `messageDetailFactory` - see next section;
-* `inclusionRegex` - a case-sensitive regular expression that must be matched in order for log entries to be sent to LogDNA, e.g. `^MyWebApp\..+` .
+* `logLevel` - to set the default log level (default is `Warning`);
+* `options` - to pass in additional configuration options (see next section).
 
 ```csharp
-loggerfactory.AddLogDNA("ingestion_key", LogLevel.Debug, hostName: "myhost", tags: new [] { "tag1", "tag2" });
+loggerfactory.AddLogDNAWeb("ingestion_key", LogLevel.Debug);
 ```
+
+## WebLogDNAOptions Class
+
+The `AddLogDNAWeb()` method has an override that takes an instance of a `WebLogDNAOptions` class:
+
+```csharp
+var options = new WebLogDNAOptions("ingestion_key");
+options.LogLevel = LogLevel.Warning;
+options.HostName = "MyHost";
+options.Tags = new [] { "one", "two" };
+options.MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor());
+
+loggerFactory.AddLogDNA(options);
+```
+
+The `WebLogDNAOptions` class has the following properties:
+
+* `LogLevel` - to set the default log level (default is `Warning`);
+* `HostName` - used to override the machine's hostname. Defaults to `Environment.MachineName`;
+* `Tags` - to be associated with the host. Defaults to `null`;
+* `MessageDetailFactory` - see next section. Defaults to an instance of `WebMessageDetailFactory`.
+
+Additionally, different log levels can be set for different namespaces using the `.AddNamespace(namespace, level)` method:
+
+```csharp
+// Would apply to all log names starting with "MyApp." - e.g. MyApp.Services, MyApp.Models, etc
+options.AddNamespace("MyApp.", LogLevel.Debug);
+```
+
+It is recommended to set the default log level (`options.LogLevel`) to `Warning` and then set a lower log level for your own code using `AddNamespace()`.
 
 ## MessageDetail class and IMessageDetailFactory
 
