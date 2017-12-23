@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedBear.LogDNA.Extensions.Logging.Web
 {
@@ -10,7 +9,7 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
     public static class LogDNAExtensionMethods
     {
         #region "ILoggerFactory"
-        public static async Task<ILoggerFactory> AddLogDNAWebAsync(
+        public static ILoggerFactory AddLogDNAWeb(
             this ILoggerFactory factory,
             string ingestionKey)
         {
@@ -18,10 +17,10 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             {
                 MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
             };
-            return await factory.AddLogDNAWebAsync(options);
+            return factory.AddLogDNAWeb(options);
         }
 
-        public static async Task<ILoggerFactory> AddLogDNAWebAsync(
+        public static ILoggerFactory AddLogDNAWeb(
             this ILoggerFactory factory,
             string ingestionKey,
             LogLevel logLevel)
@@ -30,51 +29,21 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             {
                 MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
             };
-            return await factory.AddLogDNAWebAsync(options);
+            return factory.AddLogDNAWeb(options);
         }
 
-        public static async Task<ILoggerFactory> AddLogDNAWebAsync(
+        public static ILoggerFactory AddLogDNAWeb(
             this ILoggerFactory factory,
             LogDNAOptions options)
         {
-            var client = await SetUpClientAsync(options.IngestionKey, options.HostName, options.Tags);
+            var client = SetUpClient(options.IngestionKey, options.HostName, options.Tags);
             factory.AddProvider(new LogDNAProvider(client, options));
             return factory;
-        }
-
-        public static ILoggerFactory AddLogDNAWeb(
-            this ILoggerFactory factory,
-            string ingestionKey)
-        {
-            var options = new LogDNAOptions(ingestionKey)
-            {
-                MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
-            };
-            return factory.AddLogDNAWebAsync(options).Result;
-        }
-
-        public static ILoggerFactory AddLogDNAWeb(
-            this ILoggerFactory factory,
-            string ingestionKey,
-            LogLevel logLevel)
-        {
-            var options = new LogDNAOptions(ingestionKey, logLevel)
-            {
-                MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
-            };
-            return factory.AddLogDNAWebAsync(options).Result;
-        }
-
-        public static ILoggerFactory AddLogDNAWeb(
-            this ILoggerFactory factory,
-            LogDNAOptions options)
-        {
-            return factory.AddLogDNAWebAsync(options).Result;
         }
         #endregion
 
         #region "ILoggingBuilder"
-        public static async Task<ILoggingBuilder> AddLogDNAWebAsync(
+        public static ILoggingBuilder AddLogDNAWeb(
             this ILoggingBuilder builder,
             string ingestionKey)
         {
@@ -82,10 +51,10 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             {
                 MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
             };
-            return await builder.AddLogDNAWebAsync(options);
+            return builder.AddLogDNAWeb(options);
         }
 
-        public static async Task<ILoggingBuilder> AddLogDNAWebAsync(
+        public static ILoggingBuilder AddLogDNAWeb(
             this ILoggingBuilder builder,
             string ingestionKey,
             LogLevel logLevel)
@@ -94,50 +63,20 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             {
                 MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
             };
-            return await builder.AddLogDNAWebAsync(options);
+            return builder.AddLogDNAWeb(options);
         }
 
-        public static async Task<ILoggingBuilder> AddLogDNAWebAsync(
+        public static ILoggingBuilder AddLogDNAWeb(
             this ILoggingBuilder builder,
             LogDNAOptions options)
         {
-            var client = await SetUpClientAsync(options.IngestionKey, options.HostName, options.Tags);
+            var client = SetUpClient(options.IngestionKey, options.HostName, options.Tags);
             builder.AddProvider(new LogDNAProvider(client, options));
             return builder;
         }
-
-        public static ILoggingBuilder AddLogDNAWeb(
-            this ILoggingBuilder builder,
-            string ingestionKey)
-        {
-            var options = new LogDNAOptions(ingestionKey)
-            {
-                MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
-            };
-            return builder.AddLogDNAWebAsync(options).Result;
-        }
-
-        public static ILoggingBuilder AddLogDNAWeb(
-            this ILoggingBuilder builder,
-            string ingestionKey,
-            LogLevel logLevel)
-        {
-            var options = new LogDNAOptions(ingestionKey, logLevel)
-            {
-                MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor())
-            };
-            return builder.AddLogDNAWebAsync(options).Result;
-        }
-
-        public static ILoggingBuilder AddLogDNAWeb(
-            this ILoggingBuilder builder,
-            LogDNAOptions options)
-        {
-            return builder.AddLogDNAWebAsync(options).Result;
-        }
         #endregion
 
-        private static async Task<ApiClient> SetUpClientAsync(
+        private static ApiClient SetUpClient(
             string ingestionKey,
             string hostName,
             IEnumerable<string> tags)
@@ -150,9 +89,9 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             if (!string.IsNullOrEmpty(hostName))
                 config.HostName = hostName;
 
-            var client = new ApiClient();
+            var client = new ApiClient(config);
 
-            await client.ConnectAsync(config);
+            client.Connect();
 
             return client;
         }
