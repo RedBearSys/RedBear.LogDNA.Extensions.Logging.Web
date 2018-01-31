@@ -76,7 +76,7 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
         }
         #endregion
 
-        private static ApiClient SetUpClient(
+        private static IApiClient SetUpClient(
             string ingestionKey,
             string hostName,
             IEnumerable<string> tags)
@@ -84,12 +84,12 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
             if (tags == null)
                 tags = new List<string>();
 
-            var config = new Config(ingestionKey) { Tags = tags };
+            var config = new ConfigurationManager(ingestionKey) { Tags = tags };
 
             if (!string.IsNullOrEmpty(hostName))
                 config.HostName = hostName;
 
-            var client = new ApiClient(config);
+            var client = config.Initialise();
 
             client.Connect();
 
