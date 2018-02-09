@@ -12,19 +12,19 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
         {
             options.MessageDetailFactory.RegisterHandler(detail =>
             {
-                var _contextAccessor = new HttpContextAccessor();
+                var contextAccessor = new HttpContextAccessor();
 
-                detail.AddOrUpdateProperty("TraceId", _contextAccessor.HttpContext?.TraceIdentifier);
+                detail.AddOrUpdateProperty("TraceId", contextAccessor.HttpContext?.TraceIdentifier);
                 detail.AddOrUpdateProperty("IpAddress",
-                    _contextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString());
+                    contextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString());
                 detail.AddOrUpdateProperty("UserAgent",
-                    _contextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString());
+                    contextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString());
                 detail.AddOrUpdateProperty("Language",
-                    _contextAccessor.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(',')
+                    contextAccessor.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(',')
                         .FirstOrDefault());
-                detail.AddOrUpdateProperty("Method", _contextAccessor.HttpContext?.Request.Method);
-                detail.AddOrUpdateProperty("Url", _contextAccessor.HttpContext?.Request.GetDisplayUrl());
-                detail.AddOrUpdateProperty("Identity", _contextAccessor.HttpContext?.User?.Identity?.Name);
+                detail.AddOrUpdateProperty("Method", contextAccessor.HttpContext?.Request.Method);
+                detail.AddOrUpdateProperty("Url", contextAccessor.HttpContext?.Request.GetDisplayUrl());
+                detail.AddOrUpdateProperty("Identity", contextAccessor.HttpContext?.User?.Identity?.Name);
             });
 
             return options;
