@@ -13,46 +13,39 @@ To add the LogDNA provider in **ASP.NET Core 2.0+**:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
-  {
-      services.AddLogging(loggingBuilder =>
-      	loggingBuilder.AddLogDNAWeb("ingestion_key", LogLevel.Debug));
-      
-      // Other services ...
-  }
+{
+  services.AddMvc();
+
+  var options = new LogDNAOptions(Configuration["IngestionKey"], LogLevel.Debug)
+  					.AddWebItems();
+
+  services.AddLogging(loggingBuilder => loggingBuilder.AddLogDNA(options));
+}
 ```
 
+## LogDNAOptions Class
 
-## Optional AddLogDNAWeb()  parameters
-
-The following optional parameters exist on `AddLogDNAWeb()`:
-
-* `logLevel` - to set the default log level (default is `Warning`);
-* `options` - to pass in additional configuration options (see next section).
+The `AddLogDNA()` method has an override that takes an instance of a `LogDNAOptions` class:
 
 ```csharp
-loggerfactory.AddLogDNAWeb("ingestion_key", LogLevel.Debug);
-```
-
-## WebLogDNAOptions Class
-
-The `AddLogDNAWeb()` method has an override that takes an instance of a `WebLogDNAOptions` class:
-
-```csharp
-var options = new WebLogDNAOptions("ingestion_key");
+var options = new LogDNAOptions("ingestion_key");
 options.LogLevel = LogLevel.Warning;
 options.HostName = "MyHost";
 options.Tags = new [] { "one", "two" };
-options.MessageDetailFactory = new WebMessageDetailFactory(new HttpContextAccessor());
+options.MessageDetailFactory.RegisterHandler((detail) => 
+  {
+  	detail.AddOrUpdateProperty("Foo", "Bar");
+  });
 
 loggerFactory.AddLogDNA(options);
 ```
 
-The `WebLogDNAOptions` class has the following properties:
+The `LogDNAOptions` class has the following properties:
 
 * `LogLevel` - to set the default log level (default is `Warning`);
 * `HostName` - used to override the machine's hostname. Defaults to `Environment.MachineName`;
 * `Tags` - to be associated with the host. Defaults to `null`;
-* `MessageDetailFactory` - see next section. Defaults to an instance of `WebMessageDetailFactory`.
+* `MessageDetailFactory` - see next section. 
 
 Additionally, different log levels can be set for different namespaces using the `.AddNamespace(namespace, level)` method:
 
@@ -65,7 +58,7 @@ It is recommended to set the default log level (`options.LogLevel`) to `Warning`
 
 ## MessageDetail class and IMessageDetailFactory
 
-The `WebMessageDetail` class is serialised to create a JSON message for LogDNA to ingest:
+The `MessageDetail` class is serialised to create a JSON message for LogDNA to ingest:
 
 ```json
 {
@@ -83,12 +76,20 @@ The `WebMessageDetail` class is serialised to create a JSON message for LogDNA t
 }
 ```
 
-Each new instance of a `WebMessageDetail` class is produced by an implementation of `IMessageDetailFactory`. The default implementation is `WebMessageDetailFactory`.
+Each new instance of a `MessageDetail` class is produced by an implementation of `IMessageDetailFactory`. 
 
-The contents of the `WebMessageDetail` class can be further customised by:
+The properties of the `MessageDetail` JSON can be further customised by registering an `Action<MessageDetail>` event handler that will fire whenever a new `MessageDetail` class is created:
 
-1. Creating a class that inherits from `WebMessageDetail`; and
-2. Creating a new implementation of `IMessageDetailFactory` that inherits from `WebMessageDetailFactory`, and that creates instances of this class with any any additional properties populated.
+```csharp
+var options = new LogDNAOptions("ingestion_key");
+
+options.MessageDetailFactory.RegisterHandler((detail) => 
+  {
+  	detail.AddOrUpdateProperty("Foo", "Bar");
+  });
+
+loggerFactory.AddLogDNA(options);
+```
 
 ## Enforcing JSON serialisation of objects
 
