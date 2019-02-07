@@ -4,13 +4,9 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>RedBear.LogDNA.Extensions.Logging.Web</AssemblyName>
     <RootNamespace>RedBear.LogDNA.Extensions.Logging.Web</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Red Bear Systems Limited</Authors>
-    <Company>Red Bear Systems Limited</Company>
-    <Description>LogDNA provider for Microsoft.Extensions.Logging in ASP.NET Core 2.0.</Description>
+      <Description>LogDNA provider for Microsoft.Extensions.Logging in ASP.NET Core 2.0.</Description>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/RedBearSys/RedBear.LogDNA.Extensions.Logging.Web</PackageProjectUrl>
-    <PackageIconUrl>https://avatars3.githubusercontent.com/u/17988342?v=3&amp;amp;amp;s=200</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
