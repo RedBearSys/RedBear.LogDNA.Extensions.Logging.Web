@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -23,7 +24,17 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
                     contextAccessor.HttpContext?.Request.Headers["Accept-Language"].ToString().Split(',')
                         .FirstOrDefault());
                 detail.AddOrUpdateProperty("Method", contextAccessor.HttpContext?.Request.Method);
-                detail.AddOrUpdateProperty("Url", contextAccessor.HttpContext?.Request.GetDisplayUrl());
+
+                try
+                {
+                    detail.AddOrUpdateProperty("Url", contextAccessor.HttpContext?.Request.GetDisplayUrl());
+                }
+                catch (NullReferenceException)
+                {
+                    // Getting a NullReferenceException from theinternals of GetDisplayUrl().
+                    // Nothing we can control or avoid.
+                }
+                
                 detail.AddOrUpdateProperty("Identity", contextAccessor.HttpContext?.User?.Identity?.Name);
             });
 
