@@ -31,8 +31,9 @@ namespace RedBear.LogDNA.Extensions.Logging.Web
                 }
                 catch (NullReferenceException)
                 {
-                    // Getting a NullReferenceException from theinternals of GetDisplayUrl().
-                    // Nothing we can control or avoid.
+                    // Getting a NullReferenceException from the internals of GetDisplayUrl().
+                    // This might be something to do with the response having ended but processing
+                    // is still occurring. Nothing we can control or avoid.
                 }
                 
                 detail.AddOrUpdateProperty("Identity", contextAccessor.HttpContext?.User?.Identity?.Name);
